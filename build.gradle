@@ -1,0 +1,88 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
+plugins {
+    id 'java-library'
+    id 'org.springframework.boot' version '3.0.5'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'maven-publish'
+    id "com.vanniktech.maven.publish" version "0.28.0"
+    id 'signing'
+}
+
+group = 'com.websocket'
+version = '0.0.1'
+
+mavenPublishing {
+    signAllPublications()
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+
+    coordinates("io.github.mini0192", "websocket-doc-ui", "0.0.1")
+
+    pom {
+        name = 'websocket-doc-ui'
+        description = 'WebSocket Doc Library'
+        url = '<https://github.com/mini0192/websocket-doc-ui>'
+
+        licenses {
+            license {
+                name = 'Apache License'
+                url = '<https://github.com/mini0192/websocket-doc-ui/blob/main/LICENSE>'
+            }
+        }
+
+        developers {
+            developer {
+                id = 'mini0192'
+                name = 'gunnuPark'
+                email = 'mini0192@gmail.com'
+            }
+        }
+
+        scm {
+            connection = 'scm:git:github.com/mini0192/websocket-doc-ui.git'
+            developerConnection = 'scm:git:ssh://github.com:mini0192/websocket-doc-ui.git'
+            url = '<https://github.com/mini0192/websocket-doc-ui/tree/main>'
+        }
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            groupId = project.group
+            artifactId = 'websocket-docs'
+            version = project.version
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>WebSocket Docs</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #f0f0f0;
+        }
+        .group {
+            margin-bottom: 30px;
+        }
+        .group-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            background-color: #333;
+            color: #fff;
+            border-radius: 5px;
+        }
+        .card {
+            background: #2b2b2b;
+            border: 1px solid #444;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            padding: 15px;
+        }
+        .app {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #63b3ed;
+            margin-bottom: 5px;
+        }
+        .topic {
+            font-size: 1rem;
+            color: #a0aec0;
+            margin-bottom: 10px;
+        }
+        details {
+            margin-bottom: 10px;
+        }
+        summary {
+            cursor: pointer;
+            font-weight: bold;
+            color: #90cdf4;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: Consolas, monospace;
+            background-color: #1a1a1a;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            border: 1px solid #444;
+            margin-top: 5px;
+            color: #f0f0f0;
+        }
+        .description {
+            font-size: 0.85rem;
+            color: #cbd5e0;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>WebSocket Documentation</h1>
+
+    <div th:each="group : ${docs.group}" class="group">
+        <div class="group-name" th:text="${group.name}">Group Name</div>
+
+        <div th:each="app : ${group.app}" class="card">
+            <div class="app" th:text="${app.app}">App</div>
+            <div class="topic" th:text="'Topic: ' + ${app.topic}">Topic</div>
+
+            <details>
+                <summary>Payload</summary>
+                <pre th:text="${app.payload}">Payload JSON</pre>
+            </details>
+
+            <div class="description" th:text="${app.description}">Description</div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
