@@ -1,7 +1,9 @@
-package com.websocket.core;
+package com.websocket.core.websocketdocmanager;
 
 import com.websocket.annotation.WebSocketController;
 import com.websocket.annotation.WebSocketDocs;
+import com.websocket.core.classtojson.ClassToJsonWithGson;
+import com.websocket.core.WebSocketMeta;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -14,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class WebSocketDocManager {
+public class BasicWebSocketDocManager implements WebSocketDocManager {
 
     private final ApplicationContext context;
 
@@ -23,9 +25,9 @@ public class WebSocketDocManager {
 
         for (Parameter parameter : method.getParameters()) {
             if (parameter.isAnnotationPresent(Payload.class)) {
-                ClassToJson classToJson = new ClassToJson();
+                ClassToJsonWithGson classToJsonWithGson = new ClassToJsonWithGson();
                 Class<?> paramType = parameter.getType();
-                payload = classToJson.generateExampleJson(paramType);
+                payload = classToJsonWithGson.generateJson(paramType);
                 break;
             }
         }
@@ -54,6 +56,7 @@ public class WebSocketDocManager {
         return apps;
     }
 
+    @Override
     public WebSocketMeta buildMeta() {
         List<WebSocketMeta.Group> groups = new ArrayList<>();
         String[] beanNames = context.getBeanNamesForAnnotation(WebSocketController.class);

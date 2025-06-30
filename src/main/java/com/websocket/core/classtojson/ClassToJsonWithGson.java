@@ -1,4 +1,4 @@
-package com.websocket.core;
+package com.websocket.core.classtojson;
 
 import com.google.gson.GsonBuilder;
 
@@ -6,8 +6,10 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class ClassToJson {
-    public String generateExampleJson(Class<?> clazz) {
+public class ClassToJsonWithGson implements ClassToJson {
+
+    @Override
+    public String generateJson(Class<?> clazz) {
         try {
             Map<String, Object> map = generateMap(clazz, new LinkedHashMap<>());
             return new GsonBuilder().setPrettyPrinting().create().toJson(map);
