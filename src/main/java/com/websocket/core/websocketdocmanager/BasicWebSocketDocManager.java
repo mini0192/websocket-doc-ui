@@ -1,75 +1,34 @@
 package com.websocket.core.websocketdocmanager;
 
-import com.websocket.annotation.WebSocketController;
-import com.websocket.annotation.WebSocketDocs;
-import com.websocket.core.classtojson.ClassToJsonWithGson;
-import com.websocket.core.WebSocketMeta;
+import com.websocket.annotation.WebSocketTopic;
+import com.websocket.core.classtojson.ClassToJson;
+import com.websocket.core.WebSocketTopicMeta;
+import com.websocket.annotation.AnnotationScanner;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @RequiredArgsConstructor
 public class BasicWebSocketDocManager implements WebSocketDocManager {
 
     private final ApplicationContext context;
+    private final ClassToJson classToJson;
 
-    private String buildPayload(Method method) {
-        String payload = null;
-
-        for (Parameter parameter : method.getParameters()) {
-            if (parameter.isAnnotationPresent(Payload.class)) {
-                ClassToJsonWithGson classToJsonWithGson = new ClassToJsonWithGson();
-                Class<?> paramType = parameter.getType();
-                payload = classToJsonWithGson.generateJson(paramType);
-                break;
-            }
-        }
-
-        return payload;
-    }
-
-    private List<WebSocketMeta.App> buildApps(Object bean) {
-        List<WebSocketMeta.App> apps = new ArrayList<>();
-
-        for (Method method : bean.getClass().getMethods()) {
-            if (method.isAnnotationPresent(WebSocketDocs.class) && method.isAnnotationPresent(MessageMapping.class)) {
-
-                WebSocketDocs websocketDocs = method.getAnnotation(WebSocketDocs.class);
-                MessageMapping messageMapping = method.getAnnotation(MessageMapping.class);
-
-                apps.add(WebSocketMeta.App.builder()
-                        .topic(websocketDocs.topic())
-                        .app(Arrays.toString(messageMapping.value()))
-                        .description(websocketDocs.description())
-                        .payload(buildPayload(method))
+    @Override
+    public List<WebSocketTopicMeta> getTopicMeta() {
+        List<WebSocketTopicMeta> topics = new ArrayList<>();
+        Set<Class<?>> classes = AnnotationScanner.findAnnotatedClasses(WebSocketTopic.class);
+        for(Class<?> clazz : classes) {
+            WebSocketTopic topicAnnotation = clazz.getAnnotation(WebSocketTopic.class);
+            if(topicAnnotation != null) {
+                topics.add(WebSocketTopicMeta.builder()
+                        .topic(topicAnnotation.topic())
+                        .description(topicAnnotation.description())
+                        .payload(classToJson.generateJson(clazz))
                         .build());
             }
         }
-
-        return apps;
-    }
-
-    @Override
-    public WebSocketMeta buildMeta() {
-        List<WebSocketMeta.Group> groups = new ArrayList<>();
-        String[] beanNames = context.getBeanNamesForAnnotation(WebSocketController.class);
-
-        for (String beanName : beanNames) {
-            groups.add(WebSocketMeta.Group.builder()
-                    .name(beanName)
-                    .app(buildApps(context.getBean(beanName)))
-                    .build());
-        }
-
-        return WebSocketMeta.builder()
-                .group(groups)
-                .build();
+        return topics;
     }
 }

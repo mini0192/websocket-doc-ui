@@ -1,7 +1,9 @@
 package com.websocket.core.websocketdocmanager;
 
-import com.websocket.core.WebSocketMeta;
+import com.websocket.core.WebSocketTopicMeta;
+
+import java.util.List;
 
 public interface WebSocketDocManager {
-    WebSocketMeta buildMeta();
+    List<WebSocketTopicMeta> getTopicMeta();
 }

@@ -2,103 +2,305 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>WebSocket Docs</title>
+    <title>WebSocket Documentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fira+Code&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #0D1117;
+            --card-color: #161B22;
+            --border-color: #30363D;
+            --text-color: #E0E0E0;
+            --text-muted-color: #8B949E;
+            --header-color: #FFFFFF;
+            --accent-color: #58A6FF;
+            --accent-glow-color: rgba(88, 166, 255, 0.3);
+        }
+
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #1e1e1e;
-            color: #f0f0f0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0);
+            background-size: 20px 20px;
+            color: var(--text-color);
             margin: 0;
             padding: 0;
         }
+
         .container {
             max-width: 900px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 50px 20px;
         }
-        h1 {
+
+        .header {
             text-align: center;
-            color: #f0f0f0;
+            margin-bottom: 60px;
+            animation: fadeIn 0.8s ease-out;
         }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 600;
+            letter-spacing: -1px;
+            background: -webkit-linear-gradient(45deg, #58A6FF, #A371F7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
         .group {
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
+
         .group-name {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            padding: 10px 15px;
-            background-color: #333;
-            color: #fff;
-            border-radius: 5px;
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--header-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
         }
+
         .card {
-            background: #2b2b2b;
-            border: 1px solid #444;
+            background: var(--card-color);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            padding: 15px;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUpFadeIn 0.6s ease-out forwards;
         }
-        .app {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #63b3ed;
-            margin-bottom: 5px;
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px var(--accent-glow-color);
         }
+        
+        .card-content {
+            padding: 25px;
+            cursor: pointer;
+        }
+
         .topic {
-            font-size: 1rem;
-            color: #a0aec0;
-            margin-bottom: 10px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 4px;
+            display: flex; /* Enable flexbox for alignment */
+            align-items: center; /* Vertically align items */
+            justify-content: space-between; /* Space out topic text and button */
         }
+
+        .topic-text {
+            margin-right: 10px; /* Space between text and button */
+        }
+
+        .topic-copy-button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            opacity: 0; /* Hidden by default */
+            pointer-events: none; /* Disable interaction when hidden */
+        }
+
+        .topic:hover .topic-copy-button {
+            opacity: 1; /* Show on hover */
+            pointer-events: auto; /* Enable interaction on hover */
+        }
+
+        .topic-copy-button:hover {
+            background-color: #4285F4; /* Darker shade of accent */
+        }
+
+        .topic-copy-button:active {
+            background-color: #3367D6; /* Even darker shade */
+        }
+
         details {
-            margin-bottom: 10px;
+            border-top: 1px solid var(--border-color);
         }
+        
         summary {
             cursor: pointer;
-            font-weight: bold;
-            color: #90cdf4;
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 1rem;
+            padding: 15px 25px;
+            outline: none;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s ease;
         }
+        
+        summary:hover {
+            background-color: rgba(88, 166, 255, 0.1);
+        }
+
+        summary::marker {
+           display: none; /* Hide default marker */
+        }
+        
+        summary:before {
+            content: '▸';
+            margin-right: 10px;
+            font-size: 0.8em;
+            color: var(--text-muted-color);
+            transition: transform 0.2s ease;
+        }
+
+        details[open] > summary:before {
+            transform: rotate(90deg);
+            color: var(--accent-color);
+        }
+
         pre {
             white-space: pre-wrap;
-            word-break: break-word;
-            font-family: Consolas, monospace;
-            background-color: #1a1a1a;
-            padding: 10px;
-            border-radius: 4px;
+            word-break: break-all;
+            font-family: 'Fira Code', monospace;
+            background-color: #0D1117; /* Match body background */
+            padding: 20px 25px;
+            margin: 0;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
             font-size: 0.9rem;
-            border: 1px solid #444;
-            margin-top: 5px;
-            color: #f0f0f0;
+            line-height: 1.6;
+            color: #C9D1D9;
         }
-        .description {
+
+        .payload-container {
+            position: relative;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
             font-size: 0.85rem;
-            color: #cbd5e0;
-            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            opacity: 0; /* Hidden by default */
+            pointer-events: none; /* Disable interaction when hidden */
         }
+
+        .payload-container:hover .copy-button {
+            opacity: 1; /* Show on hover */
+            pointer-events: auto; /* Enable interaction on hover */
+        }
+
+        .copy-button:hover {
+            background-color: #4285F4; /* Darker shade of accent */
+        }
+
+        .copy-button:active {
+            background-color: #3367D6; /* Even darker shade */
+        }
+
+        .description {
+            font-size: 0.95rem;
+            color: var(--text-muted-color);
+            line-height: 1.6;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUpFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>WebSocket Documentation</h1>
+    <div class="header">
+        <h1>WebSocket Documentation</h1>
+    </div>
 
-    <div th:each="group : ${docs.group}" class="group">
-        <div class="group-name" th:text="${group.name}">Group Name</div>
-
-        <div th:each="app : ${group.app}" class="card">
-            <div class="app" th:text="${app.app}">App</div>
-            <div class="topic" th:text="'Topic: ' + ${app.topic}">Topic</div>
+    <div th:each="doc : ${docs}" class="group">
+        <div class="card" style="animation-delay: 0.1s;">
+            <div class="card-content">
+                <div class="topic">
+                    <span class="topic-text" th:text="${doc.topic}">Topic</span>
+                    <button class="topic-copy-button">Copy</button>
+                </div>
+                <div class="description" th:text="${doc.description}">Description</div>
+            </div>
 
             <details>
-                <summary>Payload</summary>
-                <pre th:text="${app.payload}">Payload JSON</pre>
+                <summary>View Payload</summary>
+                <div class="payload-container">
+                    <pre class="payload-content" th:text="${doc.payload}">Payload JSON</pre>
+                    <button class="copy-button">Copy</button>
+                </div>
             </details>
-
-            <div class="description" th:text="${app.description}">Description</div>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.topic-copy-button').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const topicTextElement = event.currentTarget.closest('.topic').querySelector('.topic-text');
+                if (topicTextElement) {
+                    const topicText = topicTextElement.textContent;
+                    try {
+                        await navigator.clipboard.writeText(topicText);
+                        const originalText = button.textContent;
+                        button.textContent = 'Copied!';
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                        }, 2000);
+                    } catch (err) {
+                        console.error('Failed to copy topic: ', err);
+                    }
+                }
+            });
+        });
+
+        document.querySelectorAll('.copy-button').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const preElement = event.currentTarget.closest('.payload-container').querySelector('.payload-content');
+                if (preElement) {
+                    const payload = preElement.textContent;
+                    try {
+                        await navigator.clipboard.writeText(payload);
+                        const originalText = button.textContent;
+                        button.textContent = 'Copied!';
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                        }, 2000);
+                    } catch (err) {
+                        console.error('Failed to copy: ', err);
+                    }
+                }
+            });
+        });
+    });
+</script>
 
 </body>
 </html>
