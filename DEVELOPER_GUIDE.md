@@ -31,7 +31,7 @@ To integrate this library into your Spring Boot project, add the following depen
 
 ```groovy
 dependencies {
-    implementation 'io.github.mini0192:websocket-doc-ui:0.0.2'
+    implementation 'io.github.mini0192:websocket-doc-ui:0.0.4'
 }
 ```
 
@@ -60,7 +60,7 @@ class PublicChatMessage {
 
 @Getter
 @Setter
-@WebSocketTopic(topic = "/app/status.update", description = "Payload for updating user status with a list of items.")
+@WebSocketTopic(topic = "/app/status.update", description = "Payload for updating user status with a list of items.", group = "Feat")
 class StatusUpdate {
     private String userId;
     private List<String> items;
