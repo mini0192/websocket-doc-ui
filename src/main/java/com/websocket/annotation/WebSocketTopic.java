@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 public @interface WebSocketTopic {
     String topic();
     String description() default "";
+    String group() default "default-group";
 }
