@@ -66,12 +66,6 @@ class StatusUpdate {
     private List<String> items;
     private int level;
 }
-
-enum MessageType {
-    CHAT,
-    JOIN,
-    LEAVE
-}
 ```
 
 ### 3. Configure Package Scanning (⚠ Required)
