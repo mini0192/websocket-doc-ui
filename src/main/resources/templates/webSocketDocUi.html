@@ -57,9 +57,24 @@
             font-size: 1.6rem;
             font-weight: 600;
             color: var(--header-color);
+        }
+
+        details.group > summary {
+            padding: 15px 0;
             margin-bottom: 20px;
-            padding-bottom: 10px;
             border-bottom: 1px solid var(--border-color);
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--header-color);
+        }
+
+        details.group > summary:hover {
+            background-color: transparent; /* Override default summary hover */
+        }
+
+        details.group > summary::before {
+            font-size: 1.2em; /* Adjust arrow size for group summary */
+            margin-right: 15px;
         }
 
         .card {
@@ -239,25 +254,30 @@
         <h1>WebSocket Documentation</h1>
     </div>
 
-    <div th:each="doc : ${docs}" class="group">
-        <div class="card" style="animation-delay: 0.1s;">
-            <div class="card-content">
-                <div class="topic">
-                    <span class="topic-text" th:text="${doc.topic}">Topic</span>
-                    <button class="topic-copy-button">Copy</button>
-                </div>
-                <div class="description" th:text="${doc.description}">Description</div>
-            </div>
+    <!-- Iterate over groups -->
+        <div th:each="groupEntry : ${groupedDocs}" class="group">
+            <details open>
+                <summary class="group-name" th:text="${groupEntry.key}">Group Name</summary>
+                <!-- Iterate over docs within each group -->
+                <div th:each="doc : ${groupEntry.value}" class="card" style="animation-delay: 0.1s;">
+                    <div class="card-content">
+                        <div class="topic">
+                            <span class="topic-text" th:text="${doc.topic}">Topic</span>
+                            <button class="topic-copy-button">Copy</button>
+                        </div>
+                        <div class="description" th:text="${doc.description}">Description</div>
+                    </div>
 
-            <details>
-                <summary>View Payload</summary>
-                <div class="payload-container">
-                    <pre class="payload-content" th:text="${doc.payload}">Payload JSON</pre>
-                    <button class="copy-button">Copy</button>
+                    <details>
+                        <summary>View Payload</summary>
+                        <div class="payload-container">
+                            <pre class="payload-content" th:text="${doc.payload}">Payload JSON</pre>
+                            <button class="copy-button">Copy</button>
+                        </div>
+                    </details>
                 </div>
             </details>
         </div>
-    </div>
 </div>
 
 <script>
