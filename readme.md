@@ -19,37 +19,15 @@ This library helps you easily document and manage your WebSocket APIs, improving
 
 ---
 
-## Installation & Usage
+## Integration and Setup
 
-### 1. Add dependency to your Gradle build
+For detailed integration instructions, including Gradle dependency and component scanning setup, please see the [Developer Guide](DEVELOPER_GUIDE.md).
 
-```gradle
-dependencies {
-    implementation("io.github.mini0192:websocket-doc-ui:0.0.1")
-}
-```
-## Integration Guide
-```java
-@SpringBootApplication
-@ComponentScan({"com.test", "com.websocket.core"}) // Add the library package here
-public class TestApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(TestApplication.class, args);
-    }
-}
-```
-- com.test is your application’s base package.
-- com.websocket.core is the package from the websocket-doc-ui library.
-
-Including both packages in @ComponentScan ensures Spring detects components from your app and the library.
-
+---
 
 ## Contributing
-- Open an issue on GitHub Issues to request features or report bugs. 
-- Make changes based on the issue.
-- Submit a Pull Request (PR) for review. 
-- After review, your changes will be merged.
+
+For contribution guidelines, issue reporting, and pull request process, please refer to the [Developer Guide](DEVELOPER_GUIDE.md).
 
 Thank you for contributing!
 
