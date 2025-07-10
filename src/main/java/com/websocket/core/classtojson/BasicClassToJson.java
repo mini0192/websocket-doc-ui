@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class ClassToJsonWithGson implements ClassToJson {
+public class BasicClassToJson implements ClassToJson {
 
     @Override
     public String generateJson(Class<?> clazz) {
@@ -80,6 +80,8 @@ public class ClassToJsonWithGson implements ClassToJson {
                 Class<?> componentType = fieldType.getComponentType();
                 String tsComponentType = getTypeScriptTypeName(componentType);
                 map.put(field.getName(), "[" + tsComponentType + "]");
+            } else if (fieldType.isEnum()) {
+                map.put(field.getName(), getTypeScriptTypeName(fieldType));
             } else {
                 map.put(field.getName(), generateMap(fieldType, visited));
             }
@@ -98,7 +100,17 @@ public class ClassToJsonWithGson implements ClassToJson {
             clazz == Short.class || clazz == short.class ||
             clazz == Byte.class || clazz == byte.class) return "number";
         if (clazz == Boolean.class || clazz == boolean.class) return "boolean";
-        if (clazz == Character.class || clazz == char.class) return "string"; // TypeScript doesn't have char, use string
+        if (clazz == Character.class || clazz == char.class) return "string";
+        if (clazz.isEnum()) {
+            StringBuilder enumValues = new StringBuilder();
+            for (Object enumConstant : clazz.getEnumConstants()) {
+                if (!enumValues.isEmpty()) {
+                    enumValues.append(" | ");
+                }
+                enumValues.append("'").append(((Enum<?>) enumConstant).name()).append("'");
+            }
+            return enumValues.toString();
+        }
         return clazz.getSimpleName(); // For other complex types
     }
 
