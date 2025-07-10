@@ -103,7 +103,7 @@ http://localhost:8080/websocket-docs
 
 ### 🧱 Schema Generation
 - com.websocket.core.classtojson.ClassToJson: Interface for converting Java classes into JSON-like schemas.
-- com.websocket.core.classtojson.ClassToJsonWithGson: Concrete implementation that generates TypeScript-style schemas by recursively converting Java types (primitives, wrappers, lists, arrays, nested objects).
+- com.websocket.core.classtojson.BasicClassToJson: Concrete implementation that generates TypeScript-style schemas by recursively converting Java types (primitives, wrappers, lists, arrays, nested objects).
 
 ### 💡 UI and Controller
 - com.websocket.core.controller.BasicWebSocketDocController: A Spring MVC controller that provides the documentation data and serves the UI page.
