@@ -5,9 +5,13 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Component
 public class BasicClassToJson implements ClassToJson {
@@ -101,6 +105,8 @@ public class BasicClassToJson implements ClassToJson {
             clazz == Byte.class || clazz == byte.class) return "number";
         if (clazz == Boolean.class || clazz == boolean.class) return "boolean";
         if (clazz == Character.class || clazz == char.class) return "string";
+        if (clazz == java.util.UUID.class) return "string //UUID";
+        if (clazz == java.time.LocalDateTime.class) return "string //LocalDateTime";
         if (clazz.isEnum()) {
             StringBuilder enumValues = new StringBuilder();
             for (Object enumConstant : clazz.getEnumConstants()) {
@@ -119,6 +125,10 @@ public class BasicClassToJson implements ClassToJson {
                 || clazz == String.class
                 || clazz == Boolean.class
                 || Number.class.isAssignableFrom(clazz)
-                || clazz == Character.class;
+                || clazz == Character.class
+                || clazz == UUID.class
+                || clazz == LocalDateTime.class
+                || clazz == LocalDate.class
+                || clazz == LocalTime.class;
     }
 }
