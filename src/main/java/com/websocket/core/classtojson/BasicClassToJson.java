@@ -41,9 +41,11 @@ public class BasicClassToJson implements ClassToJson {
             Object value = entry.getValue();
             if (value instanceof Map) {
                 sb.append(mapToTypeScriptString((Map<String, Object>) value, indentLevel + 1));
-            } else if (value instanceof String && ((String) value).startsWith("[") && ((String) value).endsWith("]")) {
-                // Handle array types like [string], [number]
-                sb.append(value);
+            } else if (value instanceof List && !((List) value).isEmpty() && ((List) value).get(0) instanceof Map) {
+                // Handle list of complex objects
+                sb.append("[");
+                sb.append(mapToTypeScriptString((Map<String, Object>) ((List) value).get(0), indentLevel + 1));
+                sb.append("]");
             } else {
                 sb.append(value);
             }
@@ -75,8 +77,13 @@ public class BasicClassToJson implements ClassToJson {
                 Type[] actualTypeArguments = pt.getActualTypeArguments();
                 if (actualTypeArguments.length > 0) {
                     Class<?> listElementType = (Class<?>) actualTypeArguments[0];
-                    String tsElementType = getTypeScriptTypeName(listElementType);
-                    map.put(field.getName(), "[" + tsElementType + "]");
+                    if (isPrimitiveOrWrapperOrString(listElementType)) {
+                        String tsElementType = getTypeScriptTypeName(listElementType);
+                        map.put(field.getName(), "[" + tsElementType + "]");
+                    } else {
+                        // For complex types in a list, generate their map representation
+                        map.put(field.getName(), List.of(generateMap(listElementType, visited)));
+                    }
                 } else {
                     map.put(field.getName(), "[]"); // Raw List
                 }
