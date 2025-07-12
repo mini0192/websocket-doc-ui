@@ -1,9 +1,9 @@
 package com.websocket.core.websocketdocmanager;
 
 import com.websocket.annotation.WebSocketTopic;
-import com.websocket.core.classtojson.ClassToJson;
 import com.websocket.core.WebSocketTopicMeta;
 import com.websocket.annotation.AnnotationScanner;
+import com.websocket.core.serializer.TypeSerializer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class BasicWebSocketDocManager implements WebSocketDocManager {
 
-    private final ClassToJson classToJson;
+    private final TypeSerializer typeSerializer;
 
     @Override
     public Map<String, List<WebSocketTopicMeta>> getTopicMeta() {
@@ -26,7 +26,7 @@ public class BasicWebSocketDocManager implements WebSocketDocManager {
                 WebSocketTopicMeta meta = WebSocketTopicMeta.builder()
                         .topic(topicAnnotation.topic())
                         .description(topicAnnotation.description())
-                        .payload(classToJson.generateJson(clazz))
+                        .payload(typeSerializer.generateJson(clazz))
                         .build();
 
                 groupedTopics.computeIfAbsent(topicAnnotation.group(), k -> new ArrayList<>()).add(meta);
