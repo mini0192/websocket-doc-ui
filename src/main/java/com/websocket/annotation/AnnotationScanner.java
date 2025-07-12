@@ -1,7 +1,6 @@
 package com.websocket.annotation;
 
 import com.websocket.exception.AnnotationScanException;
-import lombok.Setter;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
@@ -12,20 +11,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AnnotationScanner {
-    @Setter
-    private static String packageName;
+    private final String packageName;
 
-    public static Set<Class<?>> findAnnotatedClasses(Class<? extends Annotation> annotation) {
+    public AnnotationScanner(String packageName) {
         if (!StringUtils.hasText(packageName)) {
             throw new AnnotationScanException("Scan package name must be set.");
         }
+        this.packageName = packageName;
+    }
+
+    public Set<Class<?>> findAnnotatedClasses(Class<? extends Annotation> annotation) {
 
         ClassPathScanningCandidateComponentProvider scanner =
                 new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(annotation));
 
         Set<Class<?>> classes = new HashSet<>();
-        for (BeanDefinition bd : scanner.findCandidateComponents(packageName)) {
+        for (BeanDefinition bd : scanner.findCandidateComponents(this.packageName)) {
             try {
                 classes.add(Class.forName(bd.getBeanClassName()));
             } catch (ClassNotFoundException e) {
@@ -34,6 +36,4 @@ public class AnnotationScanner {
         }
         return classes;
     }
-
-    private AnnotationScanner() {}
 }

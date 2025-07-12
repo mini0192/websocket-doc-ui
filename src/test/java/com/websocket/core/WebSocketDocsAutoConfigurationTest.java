@@ -15,7 +15,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class WebSocketDocsAutoConfigurationTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(WebSocketDocsAutoConfiguration.class));
+            .withConfiguration(AutoConfigurations.of(WebSocketDocsAutoConfiguration.class))
+            .withPropertyValues("websocket.doc.base-package=com.websocket");
 
     @Test
     @DisplayName("Default configuration: TypeToJson should be injected as TypeSerializer")

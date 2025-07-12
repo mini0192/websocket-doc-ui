@@ -22,25 +22,19 @@ class AnnotationScannerTest {
 
     static class NonAnnotatedClass {}
 
-    @BeforeEach
-    void setUp() {
-        // Reset packageName before each test to ensure isolation
-        AnnotationScanner.setPackageName(null);
-    }
-
     @Test
     @DisplayName("Should throw exception when package name is not set")
     void testThrowsExceptionWhenPackageNameNotSet() {
-        assertThrows(AnnotationScanException.class, () -> AnnotationScanner.findAnnotatedClasses(WebSocketTopic.class));
+        assertThrows(AnnotationScanException.class, () -> new AnnotationScanner(null));
     }
 
     @Test
     @DisplayName("Should find classes annotated with the specified annotation")
     void testFindAnnotatedClasses() {
         // Set package name to scan this test class's package
-        AnnotationScanner.setPackageName(this.getClass().getPackage().getName());
+        AnnotationScanner scanner = new AnnotationScanner(this.getClass().getPackage().getName());
 
-        Set<Class<?>> annotatedClasses = AnnotationScanner.findAnnotatedClasses(WebSocketTopic.class);
+        Set<Class<?>> annotatedClasses = scanner.findAnnotatedClasses(WebSocketTopic.class);
 
         assertNotNull(annotatedClasses);
         assertEquals(2, annotatedClasses.size());
@@ -52,8 +46,8 @@ class AnnotationScannerTest {
     @Test
     @DisplayName("Should return empty set when scanning a non-existent package")
     void testScanNonExistentPackageReturnsEmptySet() {
-        AnnotationScanner.setPackageName("com.non.existent.package");
-        Set<Class<?>> annotatedClasses = AnnotationScanner.findAnnotatedClasses(WebSocketTopic.class);
+        AnnotationScanner scanner = new AnnotationScanner("com.non.existent.package");
+        Set<Class<?>> annotatedClasses = scanner.findAnnotatedClasses(WebSocketTopic.class);
         assertNotNull(annotatedClasses);
         assertTrue(annotatedClasses.isEmpty());
     }
@@ -61,8 +55,8 @@ class AnnotationScannerTest {
     @Test
     @DisplayName("Should return empty set when scanning with a different annotation")
     void testScanWithDifferentAnnotationReturnsEmptySet() {
-        AnnotationScanner.setPackageName(this.getClass().getPackage().getName());
-        Set<Class<?>> annotatedClasses = AnnotationScanner.findAnnotatedClasses(ComponentScan.class);
+        AnnotationScanner scanner = new AnnotationScanner(this.getClass().getPackage().getName());
+        Set<Class<?>> annotatedClasses = scanner.findAnnotatedClasses(ComponentScan.class);
         assertNotNull(annotatedClasses);
         assertTrue(annotatedClasses.isEmpty());
     }
