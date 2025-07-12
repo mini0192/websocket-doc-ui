@@ -14,11 +14,12 @@ import java.util.*;
 public class BasicWebSocketDocManager implements WebSocketDocManager {
 
     private final TypeSerializer typeSerializer;
+    private final AnnotationScanner annotationScanner;
 
     @Override
     public Map<String, List<WebSocketTopicMeta>> getTopicMeta() {
         Map<String, List<WebSocketTopicMeta>> groupedTopics = new LinkedHashMap<>();
-        Set<Class<?>> classes = AnnotationScanner.findAnnotatedClasses(WebSocketTopic.class);
+        Set<Class<?>> classes = annotationScanner.findAnnotatedClasses(WebSocketTopic.class);
 
         for(Class<?> clazz : classes) {
             WebSocketTopic topicAnnotation = clazz.getAnnotation(WebSocketTopic.class);
