@@ -14,8 +14,8 @@ This project aims to provide a lightweight and easy-to-integrate solution for do
 
 - **Annotation-Driven Documentation:** Easily document your WebSocket topics using the `@WebSocketTopic` annotation.
 - **Flexible Payload Schema Generation:**
-    - **Default JSON Examples:** Automatically generates pretty-printed JSON examples for your message payloads.
-    - **TypeScript Type Definitions:** Can be configured to generate TypeScript-friendly type definitions instead of JSON examples.
+    - **Default JSON Examples:** Automatically generates pretty-printed JSON examples for your message payloads using `TypeToJson`.
+    - **TypeScript Type Definitions:** Can be configured to generate TypeScript-friendly type definitions using `TypeToTypeScript`.
         - Primitive Java types (e.g., `String`, `int`, `boolean`) are mapped to their corresponding TypeScript types (`string`, `number`, `boolean`).
         - Collections (`java.util.List`, arrays) are represented as `Type[]` (e.g., `string[]`, `number[]`).
         - Lists of Enum types are formatted as `('ENUM_VAL1', 'ENUM_VAL2')[]`.
@@ -23,8 +23,8 @@ This project aims to provide a lightweight and easy-to-integrate solution for do
         - Special types like `UUID`, `LocalDateTime`, `LocalDate`, `LocalTime` are mapped to `string` with inline comments (e.g., `string //UUID`).
 - **Interactive Web UI:** Provides a simple web interface (`webSocketDocUi.html`) to browse documented WebSocket topics.
 - **Copy-to-Clipboard Functionality:** Conveniently copy topic names and payload schemas directly from the UI.
-- **Spring Boot Auto-configuration:** Designed for seamless integration with Spring Boot projects via `spring.factories`, providing sensible defaults and easy customization.
-- **Robust Exception Handling:** Custom exception types provide clear error reporting during annotation scanning and documentation generation.
+- **Spring Boot Auto-configuration:** Designed for seamless integration with Spring Boot projects via `spring.factories`, providing sensible defaults and easy customization through `WebSocketDocsAutoConfiguration`.
+- **Robust Exception Handling:** Custom exception types (`AnnotationScanException`, `DocGenException`) provide clear error reporting during annotation scanning and documentation generation.
 
 ---
 
@@ -84,7 +84,12 @@ class StatusUpdate {
 
 ### 3. Configure Package Scanning and Output Format
 
-The library automatically scans for `@WebSocketTopic` annotations within your Spring Boot application's component scan paths. Ensure your DTOs are within a package scanned by Spring (e.g., under your `@SpringBootApplication`'s base package).
+The library automatically scans for `@WebSocketTopic` annotations within your Spring Boot application's component scan paths. You can configure the base package for scanning using `websocket.doc.basePackage` in your `application.properties` or `application.yml`.
+
+**Example `application.properties`:**
+```properties
+websocket.doc.basePackage=com.example.websocket
+```
 
 **To switch the output format from JSON (default) to TypeScript:**
 
@@ -115,7 +120,6 @@ public class WebSocketDocConfig {
     }
 }
 ```
-| 🔴 Important: If you explicitly set `AnnotationScanner.setPackageName()` in your main application, ensure it covers the packages where your `@WebSocketTopic` annotated DTOs reside. However, for most Spring Boot applications, component scanning handles this automatically.
 
 ### 4. Access the Documentation UI
 
@@ -132,21 +136,28 @@ http://localhost:8080/websocket-docs
 The library's internal architecture is designed for modularity and extensibility.
 
 ### 🔍 Annotation Processing
-- `com.websocket.annotation.WebSocketTopic`: Core annotation for marking WebSocket response DTOs for documentation.
-- `com.websocket.annotation.AnnotationScanner`: Scans the classpath for classes annotated with `@WebSocketTopic`. It throws `AnnotationScanException` if scanning fails.
+- `com.websocket.annotation.WebSocketTopic`: Core annotation for marking WebSocket response DTOs for documentation. It includes `topic`, `description`, and `group` attributes.
+- `com.websocket.annotation.AnnotationScanner`: Scans the classpath for classes annotated with `@WebSocketTopic` within a specified base package. It uses Spring's `ClassPathScanningCandidateComponentProvider` and throws `AnnotationScanException` if scanning fails or the package name is not set.
 
 ### 🧱 Payload Serialization
-- `com.websocket.core.serializer.TypeSerializer`: An interface defining the contract for converting Java classes into a string representation (e.g., JSON or TypeScript).
-- `com.websocket.core.serializer.AbstractTypeSerializer`: An abstract base class that provides common logic for traversing Java class structures, handling nested objects, collections (Lists, Maps, Arrays), and circular references. It uses `IdentityHashMap` for cycle detection and throws `DocGenException` on serialization failures.
-- `com.websocket.core.serializer.TypeToJson`: A concrete implementation of `TypeSerializer` that extends `AbstractTypeSerializer`. It generates pretty-printed JSON example data using Jackson's `ObjectMapper`.
-- `com.websocket.core.serializer.TypeToTypeScript`: A concrete implementation of `TypeSerializer` that extends `AbstractTypeSerializer`. It generates TypeScript type definitions, including special handling for enum lists and comments for specific Java types (e.g., `UUID`, `java.time` classes).
+- `com.websocket.core.serializer.TypeSerializer`: An interface defining the contract for converting Java classes into a string representation (e.g., JSON or TypeScript). The `generateJson` method is the primary entry point.
+- `com.websocket.core.serializer.AbstractTypeSerializer`: An abstract base class that provides common logic for traversing Java class structures, handling nested objects, collections (Lists, Maps, Arrays), and circular references using `IdentityHashMap` for cycle detection. It uses Jackson's `ObjectMapper` for JSON processing and throws `DocGenException` on serialization failures. Subclasses must implement `getPrimitiveOrSimpleValue` to define how primitive and simple types are represented.
+- `com.websocket.core.serializer.TypeToJson`: A concrete implementation of `TypeSerializer` that extends `AbstractTypeSerializer`. It generates pretty-printed JSON example data, providing sensible default values for various Java types including primitives, `String`, `UUID`, `java.time` classes, and enums.
+- `com.websocket.core.serializer.TypeToTypeScript`: A concrete implementation of `TypeSerializer` that extends `AbstractTypeSerializer`. It generates TypeScript type definitions, including special handling for enum lists (e.g., `('ENUM_VAL1', 'ENUM_VAL2')[]`) and inline comments for specific Java types (e.g., `string //UUID`). It overrides `convertMapToString` to format the output as TypeScript object literals.
 
 ### 💡 UI and Controller
-- `com.websocket.core.controller.BasicWebSocketDocController`: A Spring MVC controller that orchestrates the documentation data retrieval and serves the UI page.
-- `src/main/resources/templates/webSocketDocUi.html`: The Thymeleaf-based UI template displaying topics, descriptions, and schemas, with copy-to-clipboard support.
+- `com.websocket.core.controller.BasicWebSocketDocController`: A Spring MVC `@Controller` that handles the `/websocket-docs` endpoint. It retrieves grouped WebSocket topic metadata from `WebSocketDocManager` and adds it to the `Model` for rendering by the `webSocketDocUi.html` Thymeleaf template.
+- `src/main/resources/templates/webSocketDocUi.html`: The Thymeleaf-based UI template responsible for displaying topics, descriptions, and schemas, with copy-to-clipboard support.
 
 ### ⚙️ Auto-configuration
-- `com.websocket.core.WebSocketDocsAutoConfiguration`: This Spring `@Configuration` class automatically registers the default `TypeSerializer` (TypeToJson) if no other `TypeSerializer` bean is found in the application context, ensuring seamless integration.
+- `com.websocket.core.WebSocketDocsAutoConfiguration`: This Spring `@Configuration` class provides auto-configuration for the library.
+    - It uses `@EnableConfigurationProperties(WebSocketUiConfig.class)` to bind properties prefixed with `websocket.doc` to the `WebSocketUiConfig` bean, allowing configuration of the base package for scanning.
+    - It defines a default `TypeSerializer` bean (`TypeToJson`) using `@ConditionalOnMissingBean`, ensuring that `TypeToJson` is used unless another `TypeSerializer` bean is explicitly provided by the user.
+    - It defines an `AnnotationScanner` bean, initialized with the `basePackage` from `WebSocketUiConfig`.
+
+### ⚠️ Exception Handling
+- `com.websocket.exception.AnnotationScanException`: A `RuntimeException` thrown during issues with annotation scanning, such as an unset package name or failure to load a scanned class.
+- `com.websocket.exception.DocGenException`: A `RuntimeException` thrown when there are failures during the documentation generation process, typically within the `TypeSerializer` implementations.
 
 ---
 
