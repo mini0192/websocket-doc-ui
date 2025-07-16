@@ -1,0 +1,337 @@
+:root {
+    --bg-color: #0D1117;
+    --card-color: #161B22;
+    --border-color: #30363D;
+    --text-color: #E0E0E0;
+    --text-muted-color: #8B949E;
+    --header-color: #FFFFFF;
+    --accent-color: #58A6FF;
+    --accent-glow-color: rgba(88, 166, 255, 0.3);
+    --sent-color: #A371F7;
+    --received-color: #58A6FF;
+    --info-color: #8B949E;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 50px 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+h1 {
+    font-size: 3rem;
+    font-weight: 600;
+    letter-spacing: -1px;
+    background: -webkit-linear-gradient(45deg, #58A6FF, #A371F7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tab-button {
+    padding: 15px 30px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: var(--text-muted-color);
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: color 0.2s ease, border-bottom 0.2s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-button.active {
+    color: var(--header-color);
+    border-bottom: 3px solid var(--accent-color);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Documentation Styles */
+.group {
+    margin-bottom: 40px;
+}
+
+.group-name {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--header-color);
+}
+
+details.group > summary {
+    padding: 15px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--header-color);
+}
+
+details.group > summary:hover {
+    background-color: transparent;
+}
+
+details.group > summary::before {
+    font-size: 1.2em;
+    margin-right: 15px;
+}
+
+.card {
+    background: var(--card-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px var(--accent-glow-color);
+}
+
+.card-content {
+    padding: 25px;
+    cursor: pointer;
+}
+
+.topic {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--accent-color);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.topic-text {
+    margin-right: 10px;
+}
+
+.topic-copy-button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.topic:hover .topic-copy-button {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.topic-copy-button:hover {
+    background-color: #4285F4;
+}
+
+.topic-copy-button:active {
+    background-color: #3367D6;
+}
+
+details {
+    border-top: 1px solid var(--border-color);
+}
+
+summary {
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 1rem;
+    padding: 15px 25px;
+    outline: none;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+
+summary:hover {
+    background-color: rgba(88, 166, 255, 0.1);
+}
+
+summary::marker {
+   display: none;
+}
+
+summary:before {
+    content: '▸';
+    margin-right: 10px;
+    font-size: 0.8em;
+    color: var(--text-muted-color);
+    transition: transform 0.2s ease;
+}
+
+details[open] > summary:before {
+    transform: rotate(90deg);
+    color: var(--accent-color);
+}
+
+pre {
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-family: 'Fira Code', monospace;
+    background-color: #0D1117;
+    padding: 20px 25px;
+    margin: 0;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #C9D1D9;
+}
+
+.payload-container {
+    position: relative;
+}
+
+.copy-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.payload-container:hover .copy-button {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.copy-button:hover {
+    background-color: #4285F4;
+}
+
+.copy-button:active {
+    background-color: #3367D6;
+}
+
+.description {
+    font-size: 0.95rem;
+    color: var(--text-muted-color);
+    line-height: 1.6;
+}
+
+/* Test Client Styles */
+.test-client-container {
+    background: var(--card-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 30px;
+}
+
+.control-section, .message-section {
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-muted-color);
+}
+
+input[type="text"], textarea {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-color);
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.test-client-container button {
+    padding: 10px 15px;
+    border: 1px solid var(--accent-color);
+    border-radius: 6px;
+    background-color: transparent;
+    color: var(--accent-color);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.test-client-container button:hover:not(:disabled) {
+    background-color: var(--accent-color);
+    color: var(--bg-color);
+}
+
+.test-client-container button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#messages {
+    height: 350px;
+    overflow-y: auto;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 15px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+.message {
+    padding: 2px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+.message:last-child {
+    border-bottom: none;
+}
+
+.sent { color: var(--sent-color); }
+.received { color: var(--received-color); }
+.info { color: var(--info-color); }
