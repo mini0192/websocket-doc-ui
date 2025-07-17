@@ -22,11 +22,4 @@ public class BasicWebSocketDocController {
         model.addAttribute("groupedDocs", groupedMetas);
         return "webSocketUi";
     }
-
-    @GetMapping("/websocket-test")
-    public String webSocketTest(Model model) {
-        Map<String, List<WebSocketTopicMeta>> groupedMetas = webSocketDocManager.getTopicMeta();
-        model.addAttribute("groupedDocs", groupedMetas);
-        return "webSocketTestUi";
-    }
 }
