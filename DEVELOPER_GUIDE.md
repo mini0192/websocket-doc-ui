@@ -36,7 +36,7 @@ To integrate this library into your Spring Boot project, add the following depen
 
 ```groovy
 dependencies {
-    implementation 'io.github.mini0192:websocket-doc-ui:0.1.0' // Use the latest version
+    implementation 'io.github.mini0192:websocket-doc-ui:0.1.1' // Use the latest version
 }
 ```
 
@@ -84,11 +84,24 @@ class StatusUpdate {
 
 ### 3. Configure Package Scanning and Output Format
 
-The library automatically scans for `@WebSocketTopic` annotations within your Spring Boot application's component scan paths. You can configure the base package for scanning using `websocket.doc.basePackage` in your `application.properties` or `application.yml`.
+The library automatically scans for `@WebSocketTopic` annotations within your Spring Boot application's component scan paths. You can configure the base package for scanning your **WebSocket DTOs** using `websocket.doc.basePackage` in your `application.properties` or `application.yml`.
+
+**Important:** Spring Boot's auto-configuration typically handles the scanning of the library's components (like controllers and managers) if your main application class is located in a parent package of `com.websocket.core`. However, if you explicitly define `@ComponentScan` on your main application class and your application's base package is not a parent of `com.websocket.core`, you might need to include `com.websocket.core` in your `@ComponentScan` annotation to ensure the library's components are discovered.
 
 **Example `application.properties`:**
 ```properties
 websocket.doc.basePackage=com.example.websocket
+```
+
+**Example `@ComponentScan` usage (if needed):**
+```java
+@SpringBootApplication
+@ComponentScan({"com.example.yourproject", "com.websocket.core"})
+public class YourApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(YourApplication.class, args);
+    }
+}
 ```
 
 **To switch the output format from JSON (default) to TypeScript:**
@@ -131,6 +144,31 @@ http://localhost:8080/websocket-docs
 
 ---
 
+## 5. Using the Test Client
+
+The library provides an interactive WebSocket test client accessible via the web UI. This client allows you to connect to your WebSocket endpoint, subscribe to topics, and send messages directly from your browser.
+
+1.  **Access the Test Client:**
+    Navigate to `http://localhost:8080/websocket-docs` (or your application's base URL) and click on the "Test Client" tab.
+
+2.  **Connect to WebSocket:**
+    -   Enter your WebSocket endpoint URL in the "WebSocket Endpoint" field (e.g., `ws://localhost:8080/websocket` or `http://localhost:8080/websocket` if using SockJS).
+    -   Click the "Connect" button. The log area will show a "Connection EndPoint: [your-endpoint]" message upon successful connection.
+
+3.  **Subscribe to a Topic:**
+    -   In the "Subscribe Topic" field, enter the WebSocket topic you wish to subscribe to (e.g., `/topic/chat.publicMessages`).
+    -   Click the "Subscribe" button. You will see a "Subscribed to: [topic]" message in the log. Any messages sent to this topic by your server will appear in the log.
+
+4.  **Send a Message:**
+    -   In the "Send To" field, enter the application destination to which you want to send a message (e.g., `/app/hello`).
+    -   Enter the message content in the "Message Content" textarea.
+    -   Click the "Send" button. A "Send To: [destination]" message will appear in the log.
+
+5.  **View Logs:**
+    All connection, subscription, and message activities are logged in the "Log" area, providing real-time feedback on your WebSocket interactions.
+
+---
+
 ## 🛠 Internal Architecture (for Contributors)
 
 The library's internal architecture is designed for modularity and extensibility.
@@ -168,10 +206,17 @@ If you have suggestions, bug reports, or new features, follow these steps:
 1. Fork the repository.
 2. Create a new branch (e.g., `v{version}/feat/{issue number}` or `v{version}/fix/{issue number}`).
 3. Make your changes.
-4. Ensure all tests pass and write new ones as needed.
+4. Ensure all tests pass and write new ones as needed. You can run tests using:
+   ```bash
+   ./gradlew test
+   ```
 5. Commit your changes (e.g., `feat: Add new feature`).
 6. Push the branch (e.g., `git push origin feature/your-feature-name`).
 7. Open a Pull Request.
 
 ## 📄 License
 This project is licensed under the terms of the [LICENSE](LICENSE) file.
+
+## 📞 Contact
+- **Email**: parkgw9071@gmail.com
+- **GitHub**: mini0192
