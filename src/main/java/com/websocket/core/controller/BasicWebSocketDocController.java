@@ -20,6 +20,13 @@ public class BasicWebSocketDocController {
     public String webSocketDocs(Model model) {
         Map<String, List<WebSocketTopicMeta>> groupedMetas = webSocketDocManager.getTopicMeta();
         model.addAttribute("groupedDocs", groupedMetas);
-        return "websocketUi";
+        return "webSocketUi";
+    }
+
+    @GetMapping("/websocket-test")
+    public String webSocketTest(Model model) {
+        Map<String, List<WebSocketTopicMeta>> groupedMetas = webSocketDocManager.getTopicMeta();
+        model.addAttribute("groupedDocs", groupedMetas);
+        return "webSocketTestUi";
     }
 }

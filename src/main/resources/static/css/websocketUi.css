@@ -332,6 +332,6 @@ textarea {
     border-bottom: none;
 }
 
-.sent { color: var(--sent-color); }
-.received { color: var(--received-color); }
-.info { color: var(--info-color); }
+.log-success { color: #28a745; } /* Green */
+.log-failure { color: #dc3545; } /* Red */
+.log-info { color: #9daab8; } /* Gray */

@@ -22,9 +22,12 @@
 
     <!-- Documentation Tab -->
     <div id="documentation" class="tab-content active">
+        <!-- Topic Group -->
         <div th:each="groupEntry : ${groupedDocs}" class="group">
             <details open>
                 <summary class="group-name" th:text="${groupEntry.key}">Group Name</summary>
+
+                <!-- Topic Data -->
                 <div th:each="doc : ${groupEntry.value}" class="card">
                     <div class="card-content">
                         <div class="topic">
@@ -33,6 +36,8 @@
                         </div>
                         <div class="description" th:text="${doc.description}">Description</div>
                     </div>
+
+                    <!-- Payload Data -->
                     <details>
                         <summary>View Payload</summary>
                         <div class="payload-container">
@@ -50,19 +55,35 @@
         <div class="test-client-container">
             <div class="control-section">
                 <label for="endpoint">WebSocket Endpoint:</label>
-                <input type="text" id="endpoint" value="ws://localhost:8080/ws/chat">
+                <input type="text" id="endpoint" value="http://localhost:8080/websocket">
                 <div class="button-group">
                     <button id="connectBtn">Connect</button>
                     <button id="disconnectBtn" disabled>Disconnect</button>
                 </div>
             </div>
+
+            <!-- Subscribe Section -->
             <div class="message-section">
-                <label for="messageInput">Message:</label>
-                <textarea id="messageInput" placeholder="Enter message to send..."></textarea>
+                <label for="subscribe-topic">Subscribe Topic:</label>
+                <input type="text" id="subscribe-topic" placeholder="/topic/greetings">
+                <div class="button-group">
+                    <button id="subscribe" disabled>Subscribe</button>
+                    <button id="unsubscribe" disabled>Unsubscribe</button>
+                </div>
+            </div>
+
+            <!-- Message Block for Send Message -->
+            <div class="message-section">
+                <label for="send-app">Send To:</label>
+                <input type="text" id="send-app" placeholder="/app/hello">
+                <label for="name">Message Content:</label>
+                <textarea id="name" placeholder="Enter message to send..."></textarea>
                 <div class="button-group">
                     <button id="sendBtn" disabled>Send</button>
                 </div>
             </div>
+
+            <!-- Message Block for Logs -->
             <div class="message-section">
                 <label for="messages">Log</label>
                 <div id="messages"></div>
@@ -74,6 +95,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 <script src="/js/websocketUi.js"></script>
+<script src="/js/websocketTestUi.js"></script>
 
 </body>
 </html>
