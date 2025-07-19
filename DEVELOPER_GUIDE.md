@@ -36,7 +36,7 @@ To integrate this library into your Spring Boot project, add the following depen
 
 ```groovy
 dependencies {
-    implementation 'io.github.mini0192:websocket-doc-ui:0.1.1' // Use the latest version
+    implementation 'io.github.mini0192:websocket-doc-ui:0.1.5' // Use the latest version
 }
 ```
 
