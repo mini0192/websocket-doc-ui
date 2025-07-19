@@ -1,12 +1,13 @@
 package com.websocket.core.serializer;
 
-import com.websocket.exception.DocGenException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -22,6 +23,13 @@ class TypeToTypeScriptTest {
         public String name;
         public int age;
         public boolean active;
+    }
+
+    static class SimpleDto2 {
+        public List<String> name;
+        public List<UUID> uuid;
+        public List<URL> url;
+        public List<Date> date;
     }
 
     static class ComplexDto {
@@ -116,9 +124,9 @@ class TypeToTypeScriptTest {
     void testDateDtoToTypeScript() {
         String ts = typeToTypeScript.generateJson(DateDto.class);
         assertNotNull(ts);
-        assertTrue(ts.contains("createdAt: string //LocalDateTime"));
-        assertTrue(ts.contains("eventDate: string //LocalDate"));
-        assertTrue(ts.contains("eventTime: string //LocalTime"));
+        assertTrue(ts.contains("createdAt: string //Time"));
+        assertTrue(ts.contains("eventDate: string //Time"));
+        assertTrue(ts.contains("eventTime: string //Time"));
         assertTrue(ts.contains("uuid: string //UUID"));
     }
 
@@ -138,5 +146,16 @@ class TypeToTypeScriptTest {
         assertNotNull(ts);
         assertTrue(ts.contains("simpleDto: [{"));
         assertTrue(ts.contains("name: string"));
+    }
+
+    @Test
+    @DisplayName("Should convert object array DTO to TypeScript")
+    void testArrayDtoToTypeScript() {
+        String ts = typeToTypeScript.generateJson(SimpleDto2.class);
+        assertNotNull(ts);
+        assertTrue(ts.contains("name: string[]"));
+        assertTrue(ts.contains("uuid: string[] //UUID"));
+        assertTrue(ts.contains("url: string[] //URL or URI"));
+        assertTrue(ts.contains("date: string[] //Time"));
     }
 }
